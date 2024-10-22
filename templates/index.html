@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Movie Sentiment Analysis</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Movie Review Sentiment Analysis</h1>
+        
+        <form id="review-form">
+            <textarea id="review" placeholder="Enter your movie review..." required></textarea>
+            <button type="submit">Submit Review</button>
+        </form>
+
+        <h2>Previous Reviews</h2>
+        <div id="reviews">
+            {% for review in reviews %}
+            <div class="review">
+                <p><strong>Review:</strong> {{ review.review }}</p>
+                <p><strong>Sentiment:</strong> {{ review.sentiment }}</p>
+                <p><strong>Confidence:</strong> {{ review.confidence }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button id="clear-reviews">Clear Previous Reviews</button>
+    </div>
+
+    <script>
+        document.getElementById('review-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const reviewText = document.getElementById('review').value;
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ review: reviewText })
+            });
+
+            const data = await response.json();
+            alert(`Sentiment: ${data.sentiment}, Confidence: ${data.confidence}`);
+            document.getElementById('review').value = ''; // Clear the textarea
+            location.reload(); // Reload to show the new review
+        });
+
+        document.getElementById('clear-reviews').addEventListener('click', async function () {
+            const response = await fetch('/clear', { method: 'DELETE' });
+            if (response.ok) {
+                alert('Previous reviews cleared successfully.');
+                location.reload(); // Reload to show the updated reviews
+            } else {
+                alert('Failed to clear reviews.');
+            }
+        });
+    </script>
+</body>
+</html>
