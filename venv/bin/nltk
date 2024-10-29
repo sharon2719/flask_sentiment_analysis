@@ -1,4 +1,4 @@
-#!/home/ona/Documents/flask_sentiment_analysis/venv/bin/python3
+#!/home/ona/Documents/flask_sentiment_analysis/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
